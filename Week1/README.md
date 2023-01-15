@@ -455,3 +455,82 @@ adj[prerequisites[i][1]].pb(prerequisites[i][0]);
     }
 
 };
+
+
+###########################################################################################################################
+
+//9. Number of Pairs satisfying Inequality
+
+long long ans=0;
+
+
+// You are given two 0-indexed integer arrays nums1 and nums2, each of size n, and an integer diff. Find the number of pairs (i, j) such that:
+
+// 0 <= i < j <= n - 1 and
+// nums1[i] - nums1[j] <= nums2[i] - nums2[j] + diff.
+// nums1 -nums2 [i] <= nums1 - nums2 +diff
+
+// nums2[i] - nums1[i] + diff >= nums2[j] - nums1 [j]    ---deduction from the above statement
+// nums[i] + diff >= nums[j]  i<j
+// nums [i] <= nums[j] + diff --final condition to look for
+
+
+void pairs(vi &nums, int l, int r, int &diff){
+    
+    int i,j,k,temp;
+    if(l==r){
+        return;
+    }
+    if(abs(l-r)==1){
+        nums[l] <= nums[r] + diff ? ans++ : true;
+        if(nums[l]>nums[r]){
+            
+            swap(nums[l],nums[r]);
+
+        }
+        
+        
+        return;
+    }
+    int m = (l+r)/2;
+    pairs(nums,l,m,diff);
+    pairs(nums,m + 1,r,diff);
+
+        // Now we have sorted two parts of the array
+
+    Fo(i,m+1,r+1){
+        int ind =upper_bound(nums.begin() + l, nums.begin() + m +1 , nums[i] + diff) - nums.begin() - 1;
+        ind<=r ? ans += ind - l +1 : true;
+    }
+    sort(nums.begin() + l , nums.begin() + r +1);
+    
+
+
+
+
+
+
+
+
+}
+
+class Solution {
+public:
+    long long numberOfPairs(vector<int>& nums1, vector<int>& nums2, int diff) {
+        ans=0;
+        int i,j,k,temp;
+        vi nums;
+        fo(i,nums1.size()){
+            nums.pb(nums1[i]-nums2[i]);
+        }
+        // long long ans=0;
+        // fo(j,nums.size()){
+        //     fo(i,j){
+        //         nums[j]<=nums[i] + diff ? ans++ : true;
+        //     }
+        // }
+        debv(nums);
+        pairs(nums, 0, nums.size()-1 , diff);
+        return ans;
+    }
+};
