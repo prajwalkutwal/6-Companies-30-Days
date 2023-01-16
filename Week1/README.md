@@ -456,13 +456,11 @@ adj[prerequisites[i][1]].pb(prerequisites[i][0]);
 
 };
 
-
 ###########################################################################################################################
 
 //9. Number of Pairs satisfying Inequality
 
 long long ans=0;
-
 
 // You are given two 0-indexed integer arrays nums1 and nums2, each of size n, and an integer diff. Find the number of pairs (i, j) such that:
 
@@ -470,13 +468,12 @@ long long ans=0;
 // nums1[i] - nums1[j] <= nums2[i] - nums2[j] + diff.
 // nums1 -nums2 [i] <= nums1 - nums2 +diff
 
-// nums2[i] - nums1[i] + diff >= nums2[j] - nums1 [j]    ---deduction from the above statement
-// nums[i] + diff >= nums[j]  i<j
+// nums2[i] - nums1[i] + diff >= nums2[j] - nums1 [j] ---deduction from the above statement
+// nums[i] + diff >= nums[j] i<j
 // nums [i] <= nums[j] + diff --final condition to look for
 
-
 void pairs(vi &nums, int l, int r, int &diff){
-    
+
     int i,j,k,temp;
     if(l==r){
         return;
@@ -484,12 +481,12 @@ void pairs(vi &nums, int l, int r, int &diff){
     if(abs(l-r)==1){
         nums[l] <= nums[r] + diff ? ans++ : true;
         if(nums[l]>nums[r]){
-            
+
             swap(nums[l],nums[r]);
 
         }
-        
-        
+
+
         return;
     }
     int m = (l+r)/2;
@@ -503,34 +500,122 @@ void pairs(vi &nums, int l, int r, int &diff){
         ind<=r ? ans += ind - l +1 : true;
     }
     sort(nums.begin() + l , nums.begin() + r +1);
-    
-
-
-
-
-
-
-
 
 }
 
 class Solution {
 public:
-    long long numberOfPairs(vector<int>& nums1, vector<int>& nums2, int diff) {
-        ans=0;
-        int i,j,k,temp;
-        vi nums;
-        fo(i,nums1.size()){
-            nums.pb(nums1[i]-nums2[i]);
-        }
-        // long long ans=0;
-        // fo(j,nums.size()){
-        //     fo(i,j){
-        //         nums[j]<=nums[i] + diff ? ans++ : true;
-        //     }
-        // }
-        debv(nums);
-        pairs(nums, 0, nums.size()-1 , diff);
-        return ans;
-    }
+long long numberOfPairs(vector<int>& nums1, vector<int>& nums2, int diff) {
+ans=0;
+int i,j,k,temp;
+vi nums;
+fo(i,nums1.size()){
+nums.pb(nums1[i]-nums2[i]);
+}
+// long long ans=0;
+// fo(j,nums.size()){
+// fo(i,j){
+// nums[j]<=nums[i] + diff ? ans++ : true;
+// }
+// }
+debv(nums);
+pairs(nums, 0, nums.size()-1 , diff);
+return ans;
+}
 };
+
+###################################################################################################################3
+
+//q10: . Shortest Unsorted continuous Subarray
+
+class Solution {
+public:
+int findUnsortedSubarray(vector<int>& nums) {
+int i,j,k,si=-1,ei=-1;
+vi sorted=nums;
+sort(sorted.begin(),sorted.end());
+fo(i,nums.size()){
+if(sorted[i]!=nums[i] && si==-1){
+si=i;
+ei=si;
+continue;
+}
+if(sorted[i]!=nums[i]){
+ei=i;
+}
+
+        }
+        if(si==-1){
+            return 0;
+        }
+        return ei - si +1;
+
+    }
+
+};
+
+#################################################################################################################
+
+//q11 : . Number of ways to arrive at a Destination.
+
+// Dijkstra Algorithm
+//storing (dis,node) in priority queue distance array adjacency list iin pairs priority queue helps us to give the min dis
+// time complexity will be O(N + E) \* logn => O(nlogn)
+
+int Dijkstra(vector<vector<pll>> &adj, int n, int src){
+int i,j,k;
+vl distances(n, LONG_MAX);
+vl ways(n,0);
+priority_queue<pll , vector<pll> , greater<>> nexts; // pii => {distance , node}
+distances[src]=0;
+ways[src]=1;
+nexts.push({0,0});
+while(nexts.size()>0){
+auto[d, u] = nexts.top();
+nexts.pop();
+if(d>distances[u]){
+continue;
+}
+for(auto [v, D] : adj[u]){
+if(distances[v] > D + d){
+distances[v]=D+d;
+nexts.push({D+d, v});
+ways[v]=ways[u];
+}
+// following code specifically for number of ways having min cost path
+else if(distances[v] == D + d){
+ways[v] = (ways[u] + ways[v]) % mod;
+}
+}
+}
+return ways[n-1];
+
+}
+
+class Solution {
+public:
+int countPaths(int n, vector<vector<int>>& roads) {
+// ans=INT_MAX;
+// cnt=0;
+// int i,j,k,temp;
+// vvi adj(n,vi(n,-1));
+// fo(i,roads.size()){
+// adj[roads[i][0]][roads[i][1]]= roads[i][2];
+// adj[roads[i][1]][roads[i][0]]=roads[i][2];
+// }
+// vector<bool> visited(n,false);
+// DFS(adj, 0, visited, n, 0);
+// return cnt;
+vector<vector<pll>> graph(n);
+for(auto& road: roads) {
+ll u = road[0], v = road[1], time = road[2];
+graph[u].push_back({v, time});
+graph[v].push_back({u, time});
+}
+return Dijkstra(graph, n, 0);
+
+    }
+
+};
+
+##########################################################################################################################
